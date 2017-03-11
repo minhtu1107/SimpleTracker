@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SimpleTracker</string>
+    <string name="new_event_button">New Event</string>
+    <string name="view_event_button">View Events</string>
+</resources>
