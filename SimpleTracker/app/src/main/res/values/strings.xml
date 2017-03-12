@@ -2,4 +2,8 @@
     <string name="app_name">SimpleTracker</string>
     <string name="new_event_button">New Event</string>
     <string name="view_event_button">View Events</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="attend">Attend</string>
 </resources>
