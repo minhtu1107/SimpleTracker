@@ -1,7 +1,10 @@
 package com.unicorn.simpletracker.core;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,6 +29,7 @@ public class CSVManager {
         InputStreamReader reader = new InputStreamReader(is, Charset.forName("UTF-8"));
         try {
             List<String[]> csv = new CSVReader(reader).readAll();
+            reader.close();
             return  csv;
         } catch (IOException e) {
 //            e.printStackTrace();
@@ -54,5 +58,22 @@ public class CSVManager {
 //            return null;
         }
         return arr;
+    }
+
+    public void Export(String path, List<String[]> data)
+    {
+        File from_root = new File(path);
+        if(from_root.exists())
+            from_root.delete();
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(path));
+            for(int i=0; i<data.size(); i++)
+            {
+                writer.writeNext(data.get(i));
+            }
+            writer.close();
+        } catch (IOException e) {
+//            e.printStackTrace();
+        }
     }
 }

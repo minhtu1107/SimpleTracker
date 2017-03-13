@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Utils.Initialize();
         m_NewEvent =(Button) findViewById(R.id.new_event_button);
         m_NewEvent.setOnClickListener(new View.OnClickListener()
         {
@@ -93,5 +96,13 @@ public class MainActivity extends AppCompatActivity {
             m_ViewEvent.setEnabled(false);
         else
             m_ViewEvent.setEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu);
+//        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
     }
 }

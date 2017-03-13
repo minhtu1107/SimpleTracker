@@ -24,16 +24,6 @@ public class ListEventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_events);
         ArrayList<String> eventlist = EventManager.GetInstance().GetEventList();
-//        try {
-//            eventlist = CSVManager.GetInstance().OpenFile(getAssets().open("data/Studentdata.csv"), 0);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        if(eventlist==null)
-//        {
-//            eventlist = EventManager.GetInstance().GetEventList();
-//        }
 
         simpleList = (ListView)findViewById(R.id.eventListView);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_listview, R.id.textView, eventlist);

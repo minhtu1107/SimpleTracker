@@ -12,7 +12,7 @@ public class EventManager {
 
     public EventManager()
     {
-        m_EventList = new ArrayList<String>();
+        m_EventList = Utils.GetEventsFolder();
     }
 
     public static EventManager GetInstance()
@@ -30,5 +30,6 @@ public class EventManager {
     public void AddEvent(String event)
     {
         m_EventList.add(event);
+        Utils.CreateEvent(event);
     }
 }

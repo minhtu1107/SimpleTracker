@@ -1,31 +1,11 @@
 package com.unicorn.simpletracker.core;
 
+import java.util.List;
+
 /**
  * Created by tu.tranhienminh on 3/12/2017.
  */
 public class Attender {
-    private String m_ID;
-
-    public String getName() {
-        return m_Name;
-    }
-
-    public String getCourse() {
-        return m_Course;
-    }
-
-    public String getID() {
-        return m_ID;
-    }
-
-    private String m_Name;
-    private String m_Course;
-
-    public Attender(String m_Name, String m_ID, String m_Course) {
-        this.m_Name = m_Name;
-        this.m_ID = m_ID;
-        this.m_Course = m_Course;
-    }
 
     public void setAttend(boolean m_isAttend) {
         this.m_isAttend = m_isAttend;
@@ -36,4 +16,50 @@ public class Attender {
     }
 
     private boolean m_isAttend;
+
+    public static final int ATTENDER_ID = 0;
+    public static final int ATTENDER_NAME = ATTENDER_ID + 1;
+    public static final int ATTENDER_COURSE = ATTENDER_NAME + 1;
+
+    private List<String> m_data;
+    public Attender(List<String> data)
+    {
+        this.m_data = data;
+        this.m_isAttend = false;
+//        for(int i=0; i<m_data.size(); i++)
+//            System.out.println("Attender " + i + m_data.get(i));
+    }
+
+    public String getName()
+    {
+        String ret = null;
+        if(m_data.size()>ATTENDER_NAME)
+            ret = m_data.get(ATTENDER_NAME);
+        return ret;
+    }
+
+    public String getID()
+    {
+        String ret = null;
+        if(m_data.size()>ATTENDER_ID)
+            ret = m_data.get(ATTENDER_ID);
+        return ret;
+    }
+
+    public String getCourse()
+    {
+        String ret = null;
+        if(m_data.size()>ATTENDER_COURSE)
+            ret = m_data.get(ATTENDER_COURSE);
+        return ret;
+    }
+
+    public int getNumOfField()
+    {
+        return m_data.size();
+    }
+    public String getByField(int idx)
+    {
+        return m_data.get(idx);
+    }
 }

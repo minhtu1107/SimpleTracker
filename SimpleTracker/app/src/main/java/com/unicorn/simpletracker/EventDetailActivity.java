@@ -1,15 +1,19 @@
 package com.unicorn.simpletracker;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.ArrayAdapter;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.unicorn.simpletracker.core.Attender;
-import com.unicorn.simpletracker.core.EventManager;
+import com.unicorn.simpletracker.core.Utils;
 
 import java.util.ArrayList;
 
@@ -28,21 +32,32 @@ public class EventDetailActivity extends AppCompatActivity {
         simpleList = (ListView)findViewById(R.id.list_view);
 
         //test
-        m_attend = new ArrayList<Attender>();
-        m_attend.add(new Attender("Tran Hien Minh Tu", "1234567", "May Tinh"));
-        m_attend.add(new Attender("Vo Tan Dat", "7654321", "Moi Truong"));
+//        m_attend = new ArrayList<Attender>();
+//        m_attend.add(new Attender("Tran Hien Minh Tu", "1234567", "May Tinh"));
+//        m_attend.add(new Attender("Vo Tan Dat", "7654321", "Moi Truong"));
         //end test
 
+        m_attend = Utils.LoadAttendList("A", getApplicationContext());
         m_evtAdapter = new EventItemDetailAdapter(m_attend, this);
         simpleList.setAdapter(m_evtAdapter);
-
+        simpleList.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Attender att = m_attend.get(position);
+                CheckBox c = (CheckBox) view.findViewById(R.id.checkBox);
+                c.setChecked(!att.isAttend());
+                att.setAttend(!att.isAttend());
+//                System.out.println("CheckBox    ");
+            }
+        });
         inputSearch = (EditText) findViewById(R.id.inputSearch);
         inputSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 // When user changed the Text
-//                EventDetailActivity.this.arrayAdapter.getFilter().filter(cs);
+                EventDetailActivity.this.m_evtAdapter.getFilter().filter(cs);
             }
 
             @Override
@@ -57,5 +72,24 @@ public class EventDetailActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_favorite:
+                Utils.ExportCSV(m_attend);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
