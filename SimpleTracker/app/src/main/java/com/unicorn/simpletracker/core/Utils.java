@@ -96,7 +96,7 @@ public class Utils {
         return attList;
     }
 
-    public static void ExportCSV(ArrayList<Attender> attenders)
+    public static void ExportCSV(String event_name, ArrayList<Attender> attenders)
     {
         List<String[]> data = new ArrayList<String[]>();
         if(attenders.size()==0)
@@ -112,6 +112,6 @@ public class Utils {
             strings[NumOfField] = attenders.get(i).isAttend()?"1":"0";
             data.add(strings);
         }
-        CSVManager.GetInstance().Export(ROOT_PATH + "/export.csv",data);
+        CSVManager.GetInstance().Export(EVENT_PATH + "/" + event_name + "/export.csv",data);
     }
 }

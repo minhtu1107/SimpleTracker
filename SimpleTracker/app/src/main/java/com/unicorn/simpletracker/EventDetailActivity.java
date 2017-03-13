@@ -24,6 +24,7 @@ public class EventDetailActivity extends AppCompatActivity {
     private EditText inputSearch;
     private EventItemDetailAdapter m_evtAdapter;
     private ArrayList<Attender> m_attend;
+    private String m_eventName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,8 @@ public class EventDetailActivity extends AppCompatActivity {
 //        m_attend.add(new Attender("Tran Hien Minh Tu", "1234567", "May Tinh"));
 //        m_attend.add(new Attender("Vo Tan Dat", "7654321", "Moi Truong"));
         //end test
-
-        m_attend = Utils.LoadAttendList("A", getApplicationContext());
+        m_eventName = this.getIntent().getStringExtra(ListEventsActivity.EVENT_NAME);
+        m_attend = Utils.LoadAttendList(m_eventName, getApplicationContext());
         m_evtAdapter = new EventItemDetailAdapter(m_attend, this);
         simpleList.setAdapter(m_evtAdapter);
         simpleList.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -87,7 +88,7 @@ public class EventDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favorite:
-                Utils.ExportCSV(m_attend);
+                Utils.ExportCSV(m_eventName, m_attend);
                 Toast.makeText(EventDetailActivity.this, "Export Done", Toast.LENGTH_SHORT).show();
                 return true;
             default:

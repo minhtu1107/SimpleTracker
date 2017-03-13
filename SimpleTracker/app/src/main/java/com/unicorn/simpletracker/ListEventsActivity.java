@@ -18,6 +18,7 @@ import java.util.List;
 public class ListEventsActivity extends AppCompatActivity {
 
     private ListView simpleList;
+    public static String EVENT_NAME = "EVENT_NAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class ListEventsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ListEventsActivity.this, EventDetailActivity.class);
+                intent.putExtra(EVENT_NAME, EventManager.GetInstance().GetEventList().get(position));
                 startActivity(intent);
             }
         });
