@@ -67,9 +67,11 @@ public class CSVManager {
             from_root.delete();
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path));
+            String[] strings;
             for(int i=0; i<data.size(); i++)
             {
-                writer.writeNext(data.get(i));
+                strings = data.get(i);
+                writer.writeNext(strings);
             }
             writer.close();
         } catch (IOException e) {

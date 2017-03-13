@@ -104,11 +104,12 @@ public class Utils {
         int NumOfField = attenders.get(0).getNumOfField();
         for(int i=0; i<attenders.size(); i++)
         {
-            String[] strings = new String[NumOfField];
+            String[] strings = new String[NumOfField + 1];
             for(int j=0; j<NumOfField; j++)
             {
                 strings[j] = attenders.get(i).getByField(j);
             }
+            strings[NumOfField] = attenders.get(i).isAttend()?"1":"0";
             data.add(strings);
         }
         CSVManager.GetInstance().Export(ROOT_PATH + "/export.csv",data);

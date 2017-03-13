@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.unicorn.simpletracker.core.Attender;
 import com.unicorn.simpletracker.core.Utils;
@@ -87,8 +88,10 @@ public class EventDetailActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 Utils.ExportCSV(m_attend);
+                Toast.makeText(EventDetailActivity.this, "Export Done", Toast.LENGTH_SHORT).show();
                 return true;
             default:
+                Toast.makeText(EventDetailActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
                 return super.onOptionsItemSelected(item);
         }
     }
