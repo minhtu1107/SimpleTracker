@@ -2,6 +2,7 @@ package com.unicorn.simpletracker.core;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,16 +55,30 @@ public class Utils {
             event_folder.mkdirs();
     }
 
-    public static ArrayList<Attender> LoadAttendList(String event_name, Context con)
+    public static ArrayList<Attender> LoadAttendList(String event_name, Context con, boolean onlyView)
+    {
+        return LoadAttendList(event_name, con, false, onlyView);
+    }
+
+    @Nullable
+    public static ArrayList<Attender> LoadAttendList(String event_name, Context con, boolean isCheckSave, boolean onlyView)
     {
         List<String[]> csv = null;
         InputStream is = null;
+        boolean from_save = false;
         try
         {
             File from_event = new File(EVENT_PATH + "/" + event_name + "/data.csv");
+            File from_last_session = new File(EVENT_PATH + "/" + event_name + "/last_session.csv");
             File from_root = new File(ROOT_PATH + "/data.csv");
+            //check from export save
+            if(isCheckSave && from_last_session.exists())
+            {
+                is = new FileInputStream(from_last_session);
+                from_save = true;
+            }
             //check in event
-            if(from_event.exists())
+            else if(from_event.exists())
             {
                 is = new FileInputStream(from_event);
             }
@@ -90,13 +105,16 @@ public class Utils {
 //            {
 //                System.out.println("Attender " + csv.get(i)[j]);
 //            }
-            Attender att = new Attender(Arrays.asList(csv.get(i)));
-            attList.add(att);
+            Attender att = new Attender(new ArrayList<String>(Arrays.asList(csv.get(i))), from_save);
+            if((onlyView && att.isAttend()) || !onlyView)
+            {
+                attList.add(att);
+            }
         }
         return attList;
     }
 
-    public static void ExportCSV(String event_name, ArrayList<Attender> attenders)
+    public static void ExportCSV(String event_name, ArrayList<Attender> attenders, String exName, boolean isFinal)
     {
         List<String[]> data = new ArrayList<String[]>();
         if(attenders.size()==0)
@@ -104,14 +122,24 @@ public class Utils {
         int NumOfField = attenders.get(0).getNumOfField();
         for(int i=0; i<attenders.size(); i++)
         {
-            String[] strings = new String[NumOfField + 1];
+            String[] strings;
+            if(isFinal)
+            {
+                strings = new String[NumOfField];
+            }
+            else
+            {
+                strings = new String[NumOfField + 1];
+            }
             for(int j=0; j<NumOfField; j++)
             {
                 strings[j] = attenders.get(i).getByField(j);
             }
-            strings[NumOfField] = attenders.get(i).isAttend()?"1":"0";
+            if(!isFinal)
+                strings[NumOfField] = attenders.get(i).isAttend()?"1":"0";
+
             data.add(strings);
         }
-        CSVManager.GetInstance().Export(EVENT_PATH + "/" + event_name + "/export.csv",data);
+        CSVManager.GetInstance().Export(EVENT_PATH + "/" + event_name + "/" + exName,data);
     }
 }

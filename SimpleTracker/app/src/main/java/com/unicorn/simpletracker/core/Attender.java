@@ -1,6 +1,6 @@
 package com.unicorn.simpletracker.core;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by tu.tranhienminh on 3/12/2017.
@@ -21,13 +21,30 @@ public class Attender {
     public static final int ATTENDER_NAME = ATTENDER_ID + 1;
     public static final int ATTENDER_COURSE = ATTENDER_NAME + 1;
 
-    private List<String> m_data;
-    public Attender(List<String> data)
+    private ArrayList<String> m_data;
+    public Attender(ArrayList<String> data)
     {
         this.m_data = data;
         this.m_isAttend = false;
 //        for(int i=0; i<m_data.size(); i++)
 //            System.out.println("Attender " + i + m_data.get(i));
+    }
+
+    public Attender(ArrayList<String> data, boolean isFromSave)
+    {
+        this.m_data = data;
+        this.m_isAttend = false;
+//        for(int i=0; i<m_data.size(); i++)
+//            System.out.println("Attender " + i + m_data.get(i));
+        if(isFromSave)
+        {
+            String str = data.get(data.size()-1);
+            if(str.contains("1"))
+            {
+                this.m_isAttend = true;
+            }
+            this.m_data.remove(data.size()-1);
+        }
     }
 
     public String getName()

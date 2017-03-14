@@ -33,6 +33,12 @@ public class EventItemDetailAdapter extends BaseAdapter implements Filterable {
         layoutInflater = LayoutInflater.from(context);
     }
 
+    public void ReloadData(ArrayList<Attender> m_attend)
+    {
+        this.m_attend = m_attend;
+        this.m_attend_filter = m_attend;
+    }
+
     @Override
     public int getCount() {
         return m_attend_filter.size();

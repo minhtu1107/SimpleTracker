@@ -34,7 +34,7 @@ public class ListEventsActivity extends AppCompatActivity {
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ListEventsActivity.this, EventDetailActivity.class);
+                Intent intent = new Intent(ListEventsActivity.this, FilterEventItemActivity.class);
                 intent.putExtra(EVENT_NAME, EventManager.GetInstance().GetEventList().get(position));
                 startActivity(intent);
             }
