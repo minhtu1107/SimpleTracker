@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical" >
@@ -11,6 +11,28 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/by_id"/>
+    <TextView
+        android:id="@+id/search_by"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search by:"
+        android:layout_below="@+id/inputSearch"
+        android:layout_marginTop="5dp"/>
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ID"
+        android:id="@+id/by_id"
+        android:layout_below="@+id/inputSearch"
+        android:layout_toRightOf="@+id/search_by"/>
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:id="@+id/by_name"
+        android:layout_below="@+id/inputSearch"
+        android:layout_toRightOf="@+id/by_id"/>
 
-</LinearLayout>
+</RelativeLayout>

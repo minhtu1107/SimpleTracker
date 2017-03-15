@@ -17,6 +17,7 @@ import java.util.List;
 public class Utils {
     private static String ROOT_PATH = "SimpleTracker";
     private static String EVENT_PATH = "Events";
+    public static String EXPORT_PATH = "/SimpleTracker/Events/";
     private static String DEFAULT_ATTEND_LIST = "Default.csv";
     private static boolean m_isInitalize = false;
 
@@ -141,5 +142,10 @@ public class Utils {
             data.add(strings);
         }
         CSVManager.GetInstance().Export(EVENT_PATH + "/" + event_name + "/" + exName,data);
+    }
+
+    public static void SendMail()
+    {
+
     }
 }

@@ -11,4 +11,5 @@
     <string name="all_item_button">View Attendance</string>
     <string name="mark_item_button">Mark Attendance</string>
     <string name="action_clear">Clear</string>
+    <string name="action_mail">Mail</string>
 </resources>
