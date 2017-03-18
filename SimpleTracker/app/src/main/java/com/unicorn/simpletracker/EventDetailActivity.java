@@ -1,5 +1,6 @@
 package com.unicorn.simpletracker;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,16 +22,22 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.unicorn.simpletracker.BackgroundTask.BackGroudTask;
+import com.unicorn.simpletracker.BackgroundTask.BaseTask;
 import com.unicorn.simpletracker.core.Attender;
+import com.unicorn.simpletracker.core.Mail;
 import com.unicorn.simpletracker.core.Utils;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class EventDetailActivity extends AppCompatActivity {
+public class EventDetailActivity extends AppCompatActivity implements BaseTask{
 
     private ListView simpleList;
     private EditText inputSearch;
@@ -66,11 +73,6 @@ public class EventDetailActivity extends AppCompatActivity {
 
         simpleList = (ListView)findViewById(R.id.list_view);
 
-        //test
-//        m_attend = new ArrayList<Attender>();
-//        m_attend.add(new Attender("Tran Hien Minh Tu", "1234567", "May Tinh"));
-//        m_attend.add(new Attender("Vo Tan Dat", "7654321", "Moi Truong"));
-        //end test
         m_eventName = this.getIntent().getStringExtra(ListEventsActivity.EVENT_NAME);
         isOnlyView = this.getIntent().getBooleanExtra(FilterEventItemActivity.VIEW_FILTER, true);
 
@@ -85,7 +87,6 @@ public class EventDetailActivity extends AppCompatActivity {
                     CheckBox c = (CheckBox) view.findViewById(R.id.checkBox);
                     c.setChecked(!att.isAttend());
                     att.setAttend(!att.isAttend());
-//                System.out.println("CheckBox    ");
                 }
             });
         }
@@ -162,16 +163,11 @@ public class EventDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(isOnlyView)
         {
-//            Utils.ExportCSV(m_eventName, m_attend, "export.csv", true);
-//            Toast.makeText(EventDetailActivity.this, "Export Done", Toast.LENGTH_SHORT).show();
             SuperOnBack();
         }
         else {
             alertDialog.show();
-            new SaveTask().execute(new String[]{"last_session.csv", "Save Done"});
-//            Utils.ExportCSV(m_eventName, m_attend, "last_session.csv", false);
-//            alertDialog.dismiss();
-//            Toast.makeText(EventDetailActivity.this, "Save Done", Toast.LENGTH_SHORT).show();
+            new BackGroudTask(this).execute(SAVE_TASK);
         }
     }
 
@@ -214,23 +210,21 @@ public class EventDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_export:
+//            case R.id.action_export:
 //                Utils.ExportCSV(m_eventName, m_attend, "export.csv", true);
 //                Toast.makeText(EventDetailActivity.this, "Export Done", Toast.LENGTH_SHORT).show();
-                alertDialog.show();
-                new SaveTask().execute(new String[]{"export.csv", "Export Done"});
-                return true;
+//                alertDialog.show();
+//                new SaveTask().execute(new String[]{"export.csv", "Export Done"});
+//                return true;
             case R.id.action_reload:
-//                ReloadData();
-//                Toast.makeText(EventDetailActivity.this, "Reload Done", Toast.LENGTH_SHORT).show();
                 alertDialog.show();
-                new SaveTask().execute(new String[]{"Reload Done"});
+                new BackGroudTask(this).execute(RELOAD_TASK);
                 return true;
             case R.id.action_clear:
                 inputSearch.setText("");
                 return true;
             case R.id.action_mail:
-                SendMail();
+                MailDialog();
                 return true;
             default:
                 Toast.makeText(EventDetailActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
@@ -238,38 +232,48 @@ public class EventDetailActivity extends AppCompatActivity {
         }
     }
 
-//    public void MailDialog()
-//    {
-//        LayoutInflater li = LayoutInflater.from(this);
-//        View vi = li.inflate(R.layout.input_dialog, null);
-//
-//        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-//        alert.setView(vi);
-//
-//        final EditText userinput = (EditText) vi.findViewById(R.id.editTextDialogUserInput);
-//        //build dialog
-//        alert.setCancelable(false)
-//                .setPositiveButton("Ok",
-//                        new DialogInterface.OnClickListener()
-//                        {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                            }
-//                        })
-//                .setNegativeButton("Cancel",
-//                        new DialogInterface.OnClickListener()
-//                        {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.cancel();
-//                            }
-//                        });
-//        // create alert dialog
-//        AlertDialog alertDialog = alert.create();
-//        // show it
-//        alertDialog.show();
-//    }
+    private String m_mailAddress = null;
+    public void MailDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(this);
+        View vi = li.inflate(R.layout.input_dialog, null);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(vi);
+
+        TextView tex = (TextView) vi.findViewById(R.id.textView1);
+        tex.setText("Enter mail address");
+        final EditText userinput = (EditText) vi.findViewById(R.id.editTextDialogUserInput);
+        //build dialog
+        alert.setCancelable(false)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                m_mailAddress = userinput.getText().toString().trim();
+                                if(m_mailAddress.length()>0) {
+                                    dialog.cancel();
+                                    alertDialog.show();
+                                    new BackGroudTask(EventDetailActivity.this).execute(MAIL_TASK);
+                                }
+                                else
+                                    Toast.makeText(EventDetailActivity.this, "No mail address", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+        // create alert dialog
+        AlertDialog alertDialog = alert.create();
+        // show it
+        alertDialog.show();
+    }
 
     public void SendMail()
     {
@@ -278,8 +282,6 @@ public class EventDetailActivity extends AppCompatActivity {
         String filename="export.csv";
         File Root= Environment.getExternalStorageDirectory();
         String filelocation=Root.getAbsolutePath() + Utils.EXPORT_PATH + m_eventName + "/" + filename;
-//        System.out.println("Mail    " + filelocation);
-//        Uri path = Uri.fromFile(filelocation);
 
         //Explicitly only use Gmail to send
 //        emailIntent.setClassName("com.google.android.gm","com.google.android.gm.ComposeActivityGmail");
@@ -291,38 +293,107 @@ public class EventDetailActivity extends AppCompatActivity {
         startActivity(emailIntent);
     }
 
+    public int JavaMail()
+    {
+        String filename=m_eventName;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HH-mm");
+        String currentDateandTime = sdf.format(new Date());
+
+        filename += "_" + currentDateandTime + ".csv";
+        File Root= Environment.getExternalStorageDirectory();
+        String filelocation=Root.getAbsolutePath() + Utils.EXPORT_PATH + m_eventName + "/" + filename;
+//        System.out.println("Mail    " + filename);
+
+        if(m_attend.size() == 0)
+            return MAIL_RESULT_EMPTY_LIST;
+        Utils.ExportCSV(m_eventName, m_attend, filename, true);
+
+//        Mail m = new Mail("attendance102@gmail.com", "Attendance@");
+        Mail m = new Mail("attendance102@gmail.com", "Attendance@");
+
+        String[] toArr = {m_mailAddress};
+        m.setTo(toArr);
+        m.setFrom("SimpleTracker");
+        m.setSubject("Attendance list: " + filename);
+        m.setBody("Attendance list: " + filename);
+
+        try {
+            m.addAttachment(filelocation);
+
+            if(m.send()) {
+//                Toast.makeText(EventDetailActivity.this, "Email was sent successfully.", Toast.LENGTH_LONG).show();
+                return MAIL_RESULT_SUCCESS;
+            } else {
+//                Toast.makeText(EventDetailActivity.this, "Email was not sent.", Toast.LENGTH_LONG).show();
+                return MAIL_RESULT_NOT_SUCCESS;
+            }
+        } catch(Exception e) {
+//            Toast.makeText(EventDetailActivity.this, "There was a problem sending the email.", Toast.LENGTH_LONG).show();
+//            Log.e("MailApp", "Could not send email", e);
+            return MAIL_RESULT_ERROR;
+        }
+    }
+
     public void ReloadData()
     {
         m_attend = Utils.LoadAttendList(m_eventName, getApplicationContext(), false);
         m_evtAdapter.ReloadData(m_attend);
     }
 
-    private class SaveTask extends AsyncTask<String, Void, String>
-    {
-        @Override
-        protected String doInBackground(String... params) {
-//            "last_session.csv"
-            if(params.length==1)
-            {
-                ReloadData();
-                return params[0];
-            }
-            else {
-                Utils.ExportCSV(m_eventName, m_attend, params[0], false);
-                return params[1];
-            }
-        }
+    private static final int RELOAD_TASK = 0;
+    private static final int SAVE_TASK = RELOAD_TASK + 1;
+    private static final int MAIL_TASK = SAVE_TASK + 1;
 
-        @Override
-        protected void onPostExecute(String result)
+    private static final int MAIL_RESULT_EMPTY_LIST = MAIL_TASK + 1;
+    private static final int MAIL_RESULT_SUCCESS = MAIL_RESULT_EMPTY_LIST + 1;
+    private static final int MAIL_RESULT_NOT_SUCCESS = MAIL_RESULT_SUCCESS + 1;
+    private static final int MAIL_RESULT_ERROR = MAIL_RESULT_NOT_SUCCESS + 1;
+    @Override
+    public int doInBackground(int param) {
+        switch (param)
         {
-//            "Save Done"
-            alertDialog.dismiss();
-            Toast.makeText(EventDetailActivity.this, result, Toast.LENGTH_SHORT).show();
-            if(result.contains("Save"))
-                SuperOnBack();
-            if(result.contains("Reload"))
+            case RELOAD_TASK:
+                ReloadData();
+                return RELOAD_TASK;
+            case SAVE_TASK:
+                Utils.ExportCSV(m_eventName, m_attend, "last_session.csv", false);
+                return SAVE_TASK;
+            case MAIL_TASK:
+                return JavaMail();
+            default:
+                break;
+        }
+        return -1;
+    }
+
+    @Override
+    public void onPostExecute(int result) {
+        alertDialog.dismiss();
+        switch (result)
+        {
+            case RELOAD_TASK:
                 m_evtAdapter.notifyDataSetChanged();
+                Toast.makeText(EventDetailActivity.this, "Reload Done", Toast.LENGTH_SHORT).show();
+                break;
+            case SAVE_TASK:
+                SuperOnBack();
+                Toast.makeText(EventDetailActivity.this, "Save Done", Toast.LENGTH_SHORT).show();
+                break;
+            case MAIL_RESULT_EMPTY_LIST:
+                Toast.makeText(EventDetailActivity.this, "No Attendance", Toast.LENGTH_SHORT).show();
+                break;
+            case MAIL_RESULT_SUCCESS:
+                Toast.makeText(EventDetailActivity.this, "Email was sent successfully", Toast.LENGTH_SHORT).show();
+                break;
+            case MAIL_RESULT_NOT_SUCCESS:
+                Toast.makeText(EventDetailActivity.this, "Email was not sent", Toast.LENGTH_SHORT).show();
+                break;
+            case MAIL_RESULT_ERROR:
+                Toast.makeText(EventDetailActivity.this, "There was a problem sending the email", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
         }
     }
 }

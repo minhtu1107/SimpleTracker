@@ -21,11 +21,11 @@
             android:icon="@drawable/ic_menu_mail"
             android:title="@string/action_mail"
             app:showAsAction="ifRoom|withText"/>
-        <item
-            android:id="@+id/action_export"
-            android:icon="@drawable/ic_menu_export"
-            android:title="@string/action_export"
-            app:showAsAction="ifRoom|withText"/>
+        <!--<item-->
+            <!--android:id="@+id/action_export"-->
+            <!--android:icon="@drawable/ic_menu_export"-->
+            <!--android:title="@string/action_export"-->
+            <!--app:showAsAction="ifRoom|withText"/>-->
     </group>
 
 </menu>

@@ -8,12 +8,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.unicorn.simpletracker.ListEventsActivity">
+    tools:context="com.unicorn.simpletracker.ListEventsActivity"
+    >
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/eventListView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/delete_mode"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete event mode"
+        android:id="@+id/delete_mode"
+        android:layoutDirection="rtl"
+        android:checked="false"/>
 </RelativeLayout>

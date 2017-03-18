@@ -56,6 +56,13 @@ public class Utils {
             event_folder.mkdirs();
     }
 
+    public static void DeleteEvent(String name)
+    {
+        File event_folder = new File(EVENT_PATH + "/" + name);
+        if(event_folder.exists())
+            event_folder.delete();
+    }
+
     public static ArrayList<Attender> LoadAttendList(String event_name, Context con, boolean onlyView)
     {
         return LoadAttendList(event_name, con, false, onlyView);
