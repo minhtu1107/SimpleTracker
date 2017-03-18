@@ -226,10 +226,73 @@ public class EventDetailActivity extends AppCompatActivity implements BaseTask{
             case R.id.action_mail:
                 MailDialog();
                 return true;
+            case R.id.action_add:
+                AddDialog();
+                return true;
             default:
                 Toast.makeText(EventDetailActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void AddDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(this);
+        View vi = li.inflate(R.layout.input_dialog, null);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(vi);
+
+        TextView tex = (TextView) vi.findViewById(R.id.textView1);
+        tex.setText("ID");
+        final EditText userID = (EditText) vi.findViewById(R.id.editTextDialogUserInput);
+
+        TextView tex1 = (TextView) vi.findViewById(R.id.textView2);
+        tex1.setText("Name");
+        tex1.setVisibility(View.VISIBLE);
+        final EditText userName = (EditText) vi.findViewById(R.id.field_name);
+        userName.setVisibility(View.VISIBLE);
+
+        final CheckBox userAttend = (CheckBox) vi.findViewById(R.id.field_attend);
+        userAttend.setVisibility(View.VISIBLE);
+
+        //build dialog
+        alert.setCancelable(false)
+                .setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String ID = userID.getText().toString().trim();
+                                String Name = userName.getText().toString().trim();
+                                if(ID.length()>0 && Name.length()>0) {
+                                    ArrayList<String> data = new ArrayList<String>();
+                                    data.add(ID);
+                                    data.add(Name);
+                                    Attender att = new Attender(data);
+                                    att.setAttend(userAttend.isChecked());
+                                    m_attend.add(att);
+
+                                    dialog.cancel();
+                                    alertDialog.show();
+                                    new BackGroudTask(EventDetailActivity.this).execute(ADD_TASK);
+                                }
+                                else
+                                    Toast.makeText(EventDetailActivity.this, "Invalid attendance", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+        // create alert dialog
+        AlertDialog alertDialog = alert.create();
+        // show it
+        alertDialog.show();
     }
 
     private String m_mailAddress = null;
@@ -343,7 +406,8 @@ public class EventDetailActivity extends AppCompatActivity implements BaseTask{
 
     private static final int RELOAD_TASK = 0;
     private static final int SAVE_TASK = RELOAD_TASK + 1;
-    private static final int MAIL_TASK = SAVE_TASK + 1;
+    private static final int ADD_TASK = SAVE_TASK + 1;
+    private static final int MAIL_TASK = ADD_TASK + 1;
 
     private static final int MAIL_RESULT_EMPTY_LIST = MAIL_TASK + 1;
     private static final int MAIL_RESULT_SUCCESS = MAIL_RESULT_EMPTY_LIST + 1;
@@ -355,10 +419,11 @@ public class EventDetailActivity extends AppCompatActivity implements BaseTask{
         {
             case RELOAD_TASK:
                 ReloadData();
-                return RELOAD_TASK;
+                return param;
+            case ADD_TASK:
             case SAVE_TASK:
                 Utils.ExportCSV(m_eventName, m_attend, "last_session.csv", false);
-                return SAVE_TASK;
+                return param;
             case MAIL_TASK:
                 return JavaMail();
             default:
@@ -375,6 +440,9 @@ public class EventDetailActivity extends AppCompatActivity implements BaseTask{
             case RELOAD_TASK:
                 m_evtAdapter.notifyDataSetChanged();
                 Toast.makeText(EventDetailActivity.this, "Reload Done", Toast.LENGTH_SHORT).show();
+                break;
+            case ADD_TASK:
+                Toast.makeText(EventDetailActivity.this, "Add Done", Toast.LENGTH_SHORT).show();
                 break;
             case SAVE_TASK:
                 SuperOnBack();

@@ -9,6 +9,11 @@
         app:showAsAction="ifRoom|withText"/>
     <group android:id="@+id/mark_menu_group">
         <!-- Settings, should always be in the overflow -->
+        <item android:id="@+id/action_add"
+              android:icon="@drawable/ic_menu_add"
+              android:title="@string/action_reload"
+              app:showAsAction="ifRoom|withText"/>
+
         <item android:id="@+id/action_reload"
               android:icon="@drawable/ic_menu_reload"
               android:title="@string/action_reload"
