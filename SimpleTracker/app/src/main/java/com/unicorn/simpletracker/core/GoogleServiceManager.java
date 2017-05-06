@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +40,7 @@ public class GoogleServiceManager implements GoogleApiClient.ConnectionCallbacks
     }
     private Context mContext;
     private Activity mActivity;
+    private AlertDialog mDialog;
 
     public boolean IsInitial()
     {
@@ -57,8 +59,9 @@ public class GoogleServiceManager implements GoogleApiClient.ConnectionCallbacks
                 .build();
     }
 
-    public void ConnnectAndDownload(Activity act) {
+    public void ConnnectAndDownload(Activity act, AlertDialog dialog) {
         mActivity = act;
+        mDialog = dialog;
         if(!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting())
         {
             mGoogleApiClient.connect();
@@ -140,6 +143,7 @@ public class GoogleServiceManager implements GoogleApiClient.ConnectionCallbacks
 
                     // Close file contents
                     driveContents.discard(mGoogleApiClient);
+                    mDialog.dismiss();
                 }
             };
 }

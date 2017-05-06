@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button m_NewEvent;
     private Button m_ViewEvent;
     private Button m_Download;
+    private AlertDialog alertDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 ConnnectAndDownload();
             }
         });
+        if(alertDialog == null)
+            CreateDialog();
         if(!GoogleServiceManager.GetInstance().IsInitial())
         {
             GoogleServiceManager.GetInstance().Initial(getApplicationContext());
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ConnnectAndDownload() {
-        GoogleServiceManager.GetInstance().ConnnectAndDownload(this);
+        GoogleServiceManager.GetInstance().ConnnectAndDownload(this, alertDialog);
     }
 
     public void updateEvenList()
@@ -143,10 +147,25 @@ public class MainActivity extends AppCompatActivity {
                     String downloadUrl = "https://drive.google.com/open?id=" + resourceId + "&export=download";
 //                    System.out.println("drive.google" + downloadUrl);
 //                    open(driveId);
+                    alertDialog.show();
                     GoogleServiceManager.GetInstance().SaveFile(driveId, "root");
                 }
                 break;
         }
     }
 
+    public void CreateDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(this);
+        View vi = li.inflate(R.layout.progress_dialog, null);
+
+        ProgressBar pBar2 = (ProgressBar)vi.findViewById(R.id.progressBar);
+        pBar2.setIndeterminate(true);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(vi);
+        alert.setCancelable(false);
+        // create alert dialog
+        alertDialog = alert.create();
+    }
 }

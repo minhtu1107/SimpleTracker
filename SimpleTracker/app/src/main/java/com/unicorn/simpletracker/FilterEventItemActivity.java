@@ -1,10 +1,13 @@
 package com.unicorn.simpletracker;
 
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -17,6 +20,7 @@ public class FilterEventItemActivity extends AppCompatActivity {
     private Button m_ViewItem;
     private Button m_Download;
     private String m_eventName;
+    private AlertDialog alertDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +52,15 @@ public class FilterEventItemActivity extends AppCompatActivity {
             }
         });
 
+        if(alertDialog == null)
+            CreateDialog();
+
         m_Download = (Button) findViewById(R.id.download_item_button);
         m_Download.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
-                GoogleServiceManager.GetInstance().ConnnectAndDownload(FilterEventItemActivity.this);
+                GoogleServiceManager.GetInstance().ConnnectAndDownload(FilterEventItemActivity.this, alertDialog);
             }
         });
     }
@@ -72,9 +79,25 @@ public class FilterEventItemActivity extends AppCompatActivity {
             case GoogleServiceManager.REQUEST_CODE_OPENER:
                 if (resultCode == RESULT_OK) {
                     DriveId driveId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    alertDialog.show();
                     GoogleServiceManager.GetInstance().SaveFile(driveId, m_eventName);
                 }
                 break;
         }
+    }
+
+    public void CreateDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(this);
+        View vi = li.inflate(R.layout.progress_dialog, null);
+
+        ProgressBar pBar2 = (ProgressBar)vi.findViewById(R.id.progressBar);
+        pBar2.setIndeterminate(true);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(vi);
+        alert.setCancelable(false);
+        // create alert dialog
+        alertDialog = alert.create();
     }
 }
