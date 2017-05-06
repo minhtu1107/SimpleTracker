@@ -6,11 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.unicorn.simpletracker.core.GoogleServiceManager;
+
 public class FilterEventItemActivity extends AppCompatActivity {
 
     public static String VIEW_FILTER = "VIEW_FILTER";
     private Button m_MarkItem;
     private Button m_ViewItem;
+    private Button m_Download;
     private String m_eventName;
 
     @Override
@@ -42,5 +47,34 @@ public class FilterEventItemActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        m_Download = (Button) findViewById(R.id.download_item_button);
+        m_Download.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                GoogleServiceManager.GetInstance().ConnnectAndDownload(FilterEventItemActivity.this);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        switch (requestCode) {
+            case GoogleServiceManager.RESOLVE_CONNECTION_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+//                    mGoogleApiClient.connect();
+                }
+                if(resultCode == RESULT_CANCELED)
+                {
+                }
+                break;
+            case GoogleServiceManager.REQUEST_CODE_OPENER:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    GoogleServiceManager.GetInstance().SaveFile(driveId, m_eventName);
+                }
+                break;
+        }
     }
 }
