@@ -22,5 +22,12 @@
         android:text="@string/all_item_button"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/mark_item_button"/>
+    <Button
+        android:id="@+id/download_item_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/download_button"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/view_item_button"/>
 
 </RelativeLayout>

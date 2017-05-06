@@ -33,5 +33,12 @@
         android:text="@string/view_event_button"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/new_event_button"/>
+    <Button
+        android:id="@+id/download_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/download_button"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/view_event_button"/>
 
 </RelativeLayout>
