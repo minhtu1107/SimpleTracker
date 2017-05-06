@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,6 +150,35 @@ public class Utils {
             data.add(strings);
         }
         CSVManager.GetInstance().Export(EVENT_PATH + "/" + event_name + "/" + exName,data);
+    }
+
+    public static boolean SaveDriveFile(String path, InputStream Is)
+    {
+        File file;
+        if(path == "root")
+        {
+            file = new File(ROOT_PATH + "/data.csv");
+        }
+        else
+        {
+            file = new File(EVENT_PATH + "/" + path + "/data.csv");
+        }
+        if(file.exists())
+            file.delete();
+        try {
+            FileOutputStream fileOutput = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int bufferLength = 0;
+            while ((bufferLength = Is.read(buffer)) > 0) {
+                fileOutput.write(buffer, 0, bufferLength);
+            }
+            fileOutput.close();
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+        return true;
     }
 
     public static void SendMail()

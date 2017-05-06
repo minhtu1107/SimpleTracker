@@ -3,26 +3,27 @@ package com.unicorn.simpletracker;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.unicorn.simpletracker.core.*;
-
-import java.util.ArrayList;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.unicorn.simpletracker.core.EventManager;
+import com.unicorn.simpletracker.core.GoogleServiceManager;
+import com.unicorn.simpletracker.core.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
     final Context context = this;
     private Button m_NewEvent;
     private Button m_ViewEvent;
+    private Button m_Download;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,24 @@ public class MainActivity extends AppCompatActivity {
 //            EventManager.GetInstance().AddEvent("Event "+i);
         //end test
         updateEvenList();
+
+
+        m_Download = (Button) findViewById(R.id.download_button);
+        m_Download.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                ConnnectAndDownload();
+            }
+        });
+        if(!GoogleServiceManager.GetInstance().IsInitial())
+        {
+            GoogleServiceManager.GetInstance().Initial(getApplicationContext());
+        }
+    }
+
+    private void ConnnectAndDownload() {
+        GoogleServiceManager.GetInstance().ConnnectAndDownload(this);
     }
 
     public void updateEvenList()
@@ -105,4 +124,29 @@ public class MainActivity extends AppCompatActivity {
 //        getMenuInflater().inflate(R.view_menu.view_menu, view_menu);
         return true;
     }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        switch (requestCode) {
+            case GoogleServiceManager.RESOLVE_CONNECTION_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+//                    mGoogleApiClient.connect();
+                }
+                if(resultCode == RESULT_CANCELED)
+                {
+                }
+                break;
+            case GoogleServiceManager.REQUEST_CODE_OPENER:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    String resourceId = driveId.getResourceId();
+                    String downloadUrl = "https://drive.google.com/open?id=" + resourceId + "&export=download";
+//                    System.out.println("drive.google" + downloadUrl);
+//                    open(driveId);
+                    GoogleServiceManager.GetInstance().SaveFile(driveId, "root");
+                }
+                break;
+        }
+    }
+
 }
